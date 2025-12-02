@@ -33,12 +33,14 @@ public class PainRectangle : MonoBehaviour
     public RectTransform rectPrefab;
     public RectTransform circlePrefab;
     public GameObject dimensionInputPrefab;
+    public Scenary scenary;
 
     [Header("Draw surface")]
     public RawImage drawSurface; // Рисование и перемещение ограничены этой областью
 
     [Header("Dimension Button")]
     public Button dimensionButton;
+    public Button dimensionButton2;
 
     [Header("Draw Buttons")]
     public Button drawRectangleButton;
@@ -123,7 +125,7 @@ public class PainRectangle : MonoBehaviour
         if (dimensionButton != null)
         {
             dimensionButton.onClick.AddListener(OnDimensionButtonPressed);
-            dimensionButton.gameObject.SetActive(false);
+            dimensionButton.enabled = false;
         }
 
         // Setup draw buttons
@@ -135,7 +137,7 @@ public class PainRectangle : MonoBehaviour
                 circleDrawMode = false;
                 stage = Stage.DrawRectangle;
             });
-            drawRectangleButton.gameObject.SetActive(true);
+            
         }
 
         if (drawCircleButton != null)
@@ -146,7 +148,7 @@ public class PainRectangle : MonoBehaviour
                 rectangleDrawMode = false;
                 stage = Stage.DrawCircle;
             });
-            drawCircleButton.gameObject.SetActive(false); // hidden initially
+            drawCircleButton.enabled = false;
         }
 
         if (useXR)
@@ -473,15 +475,15 @@ public class PainRectangle : MonoBehaviour
             if (!isCircle)
             {
                 rectangleDrawMode = false;
-                if (drawRectangleButton != null) drawRectangleButton.gameObject.SetActive(false);
-                if (drawCircleButton != null) drawCircleButton.gameObject.SetActive(true);
+                if (drawRectangleButton != null) drawRectangleButton.enabled = false;
+                if (drawCircleButton != null) drawCircleButton.enabled = true;
                 MarkStep(1);
             }
             else
             {
                 // If circle finished, disable circle draw mode and hide circle button
                 circleDrawMode = false;
-                if (drawCircleButton != null) drawCircleButton.gameObject.SetActive(false);
+                if (drawCircleButton != null) drawCircleButton.enabled = false;
                 MarkStep(3);
             }
         }
@@ -522,7 +524,7 @@ public class PainRectangle : MonoBehaviour
                 stage = Stage.DrawCircle;
 
                 // Make sure circle button is active to allow explicit start
-                if (drawCircleButton != null) drawCircleButton.gameObject.SetActive(true);
+                if (drawCircleButton != null) drawCircleButton.enabled = true;
             }
         }
     }
@@ -563,9 +565,9 @@ public class PainRectangle : MonoBehaviour
                 circleDrawMode = false;
 
                 // скрываем кнопку круга
-                if (drawCircleButton != null) drawCircleButton.gameObject.SetActive(false);
+                if (drawCircleButton != null) drawCircleButton.enabled = false;
 
-                if (dimensionButton != null) dimensionButton.gameObject.SetActive(true);
+                if (dimensionButton != null) dimensionButton.enabled = true;
                 stage = Stage.WaitDimensionButton;
             }
         }
@@ -594,7 +596,7 @@ public class PainRectangle : MonoBehaviour
         if (stage == Stage.WaitDimensionButton)
         {
             stage = Stage.DimensionRectangle;
-            if (dimensionButton != null) dimensionButton.gameObject.SetActive(false);
+            if (dimensionButton != null) dimensionButton.enabled = false;
         }
     }
 
@@ -675,6 +677,7 @@ public class PainRectangle : MonoBehaviour
 
         if (Mathf.Abs(v - requiredCircleD) < RequiredTolerance) stage = Stage.Done;
         MarkStep(6);
+        scenary.SwitchApp();
     }
 
     void CloseWindow()

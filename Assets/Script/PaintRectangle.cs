@@ -6,8 +6,9 @@ using TMPro;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class PainRectangle : MonoBehaviour
+public class PaintRectangle : MonoBehaviour
 {
+    public static bool isEnding;
 
     // --- CONSTANTS ---
     private const float RequiredTolerance = 1f;
@@ -119,6 +120,7 @@ public class PainRectangle : MonoBehaviour
 
     void Start()
     {
+        isEnding = false;
         raycaster = canvasRect.GetComponentInParent<GraphicRaycaster>();
         eventSystem = EventSystem.current;
 
@@ -677,7 +679,7 @@ public class PainRectangle : MonoBehaviour
 
         if (Mathf.Abs(v - requiredCircleD) < RequiredTolerance) stage = Stage.Done;
         MarkStep(6);
-        scenary.SwitchApp();
+        isEnding = true;
     }
 
     void CloseWindow()

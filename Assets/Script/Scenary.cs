@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum Act
 {
@@ -11,7 +12,10 @@ public enum Act
 public class Scenary : MonoBehaviour
 {
     [SerializeField] GameObject[] apps;
+    [SerializeField] GameObject miniAppPrefab;
+    public Button button3D;
     public static int CountStage = 0;
+    
     private void Start()
     {
         SwitchApp();
@@ -23,5 +27,18 @@ public class Scenary : MonoBehaviour
         }
         apps[CountStage].SetActive(true);
         CountStage++;
+    }
+    public void SpawnMiniApp()
+    {
+        miniAppPrefab.SetActive(true);
+    }
+
+    private void Update()
+    {
+        if (PaintRectangle.isEnding)
+        {
+            button3D.onClick.AddListener(() => SpawnMiniApp());
+            PaintRectangle.isEnding = false;
+        }
     }
 }

@@ -11,7 +11,7 @@ public enum Act
 }
 public class Scenary : MonoBehaviour
 {
-    [SerializeField] GameObject[] apps;
+    [SerializeField] Canvas[] apps;
     [SerializeField] GameObject miniAppPrefab;
     public Button button3D;
     public static int CountStage = 0;
@@ -23,9 +23,10 @@ public class Scenary : MonoBehaviour
     public void SwitchApp()
     {
         foreach (var app in apps) {
-            app.SetActive(false);
+            app.GetComponent<Canvas>().enabled = false;
         }
-        apps[CountStage].SetActive(true);
+        apps[CountStage].GetComponent<Canvas>().enabled = true;
+        
         CountStage++;
     }
     public void SpawnMiniApp()

@@ -20,6 +20,7 @@ public class MiniAppScript : MonoBehaviour
         if (inputTransform.text == "15")
         {
             scenary.SwitchApp();
+            Destroy(gameObject);
         }
         else
         {

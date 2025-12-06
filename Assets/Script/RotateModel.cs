@@ -14,54 +14,45 @@ public class StickRotate : MonoBehaviour
 
     private InputAction moveAction;
 
-    private void OnEnable()
+    // Флаг разрешения вращения — безопасный!
+    public bool allowRotation = false;
+
+    private void Start()
     {
         InitInput();
     }
 
-    private void OnDisable()
-    {
-        if (moveAction != null)
-            moveAction.Disable();
-    }
-
     private void InitInput()
     {
-        if (actions == null)
-        {
-            Debug.LogError("StickRotate: actions asset not assigned!");
-            return;
-        }
-
         var map = actions.FindActionMap(actionMapName, false);
-        if (map == null)
-        {
-            Debug.LogError("StickRotate: action map not found: " + actionMapName);
-            return;
-        }
-
         moveAction = map.FindAction(actionName, false);
-        if (moveAction == null)
-        {
-            Debug.LogError("StickRotate: action not found: " + actionName);
-            return;
-        }
-
-        moveAction.Enable();
-
-        Debug.Log("StickRotate: Input reinitialized!");
+        moveAction.Enable();   // << ВКЛЮЧАЕМ ТОЛЬКО ОДИН РАЗ
     }
 
     private void Update()
     {
+        if (!allowRotation) return; // << БЛОКИРУЕМ безопасно
+
         if (moveAction == null) return;
 
         Vector2 input = moveAction.ReadValue<Vector2>();
-
         if (input.sqrMagnitude > 0.001f)
         {
             target.Rotate(Vector3.up, input.x * rotationSpeed * Time.deltaTime);
             target.Rotate(Vector3.right, -input.y * rotationSpeed * Time.deltaTime);
         }
+    }
+
+    // Вызывается из Scenary
+    public void ActivateRotation()
+    {
+        allowRotation = true;
+        Debug.Log("Rotation activated");
+    }
+
+    public void DeactivateRotation()
+    {
+        allowRotation = false;
+        Debug.Log("Rotation deactivated");
     }
 }

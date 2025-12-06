@@ -1,37 +1,64 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum Act
-{
-    Drawing,
-    Modeling,
-    MakingPlan
-}
 public class Scenary : MonoBehaviour
 {
-    [SerializeField] Canvas[] apps;
-    [SerializeField] GameObject miniAppPrefab;
+    [SerializeField] Canvas[] _apps;
+    [SerializeField] GameObject _miniAppPrefab;
     public Button button3D;
+    public StickRotate stickRotateScript;
     public static int CountStage = 0;
-    
+
     private void Start()
     {
         SwitchApp();
     }
+
     public void SwitchApp()
     {
-        foreach (var app in apps) {
-            app.GetComponent<Canvas>().enabled = false;
-        }
-        apps[CountStage].GetComponent<Canvas>().enabled = true;
-        
+        // Выключаем все Canvas'ы
+        foreach (var app in _apps)
+            app.enabled = false;
+
+        // Сначала блокируем вращение (без Disable Input)
+        if (stickRotateScript != null)
+            stickRotateScript.DeactivateRotation();
+
+        // Включаем текущий Canvas
+        _apps[CountStage].enabled = true;
+
+        // Ждём 1 кадр — дождаться переключения UI
+        StartCoroutine(EnableRotationSafe());
+
         CountStage++;
     }
+
+    private IEnumerator EnableRotationSafe()
+    {
+        yield return null; // подождать до конца кадра
+
+        // Вращение включаем только во втором приложении
+        int index = CountStage - 1;
+
+        if (stickRotateScript != null)
+        {
+            if (index == 1) // Второй Canvas
+            {
+                stickRotateScript.ActivateRotation();
+                Debug.Log("Scenary: Rotation ENABLED for app 2");
+            }
+            else
+            {
+                stickRotateScript.DeactivateRotation();
+                Debug.Log("Scenary: Rotation DISABLED");
+            }
+        }
+    }
+
     public void SpawnMiniApp()
     {
-        miniAppPrefab.SetActive(true);
+        _miniAppPrefab.SetActive(true);
     }
 
     private void Update()
